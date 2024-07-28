@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   django_init_project:
-    image: django_init_project
+    image: django_init_project:latest
     build:
       context: ./app
       dockerfile: Dockerfile
@@ -20,4 +20,3 @@ services:
           memory: 256M
       restart_policy:
         condition: on-failure
-    
