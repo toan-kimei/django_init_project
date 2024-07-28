@@ -2,6 +2,7 @@ version: "3.8"
 
 services:
   django_init_project:
+    image: django_init_project
     build:
       context: ./app
       dockerfile: Dockerfile
