@@ -2,13 +2,10 @@ version: "3.8"
 
 services:
   django_init_project:
-    # image: django_init_project:production
-    # container_name: django_init_project
     build:
       context: ./app
       dockerfile: Dockerfile
     command: python manage.py runserver
-
     ports:
       - ${PORT:-8000}:8000
     deploy:
