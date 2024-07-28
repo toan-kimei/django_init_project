@@ -8,14 +8,14 @@ services:
       context: ./app
       dockerfile: Dockerfile
     command: gunicorn django_init_project.wsgi:application --bind 0.0.0.0:8000 -w ${NUM_WORKERS:-4}
-    volumes:
-      - ./static_volume:/home/app/web/staticfiles
-      - ./media_volume:/home/app/web/mediafiles
-      - ./app/logs:/home/app/web/logs
+    # volumes:
+    #   - ./static_volume:/home/app/web/staticfiles
+    #   - ./media_volume:/home/app/web/mediafiles
+    #   - ./app/logs:/home/app/web/logs
     ports:
       - ${PORT:-8000}:8000
 
-    restart: unless-stopped
+    # restart: unless-stopped
     networks:
       - django_init_project_network
     deploy:
@@ -29,7 +29,7 @@ services:
           memory: 256M
       restart_policy:
         condition: on-failure
-        delay: 5s
+        # delay: 5s
         # max_attempts: 3
         # window: 120s
 
@@ -40,18 +40,18 @@ services:
       context: ./app
       dockerfile: Dockerfile
     command: gunicorn django_init_project.wsgi:application --bind 0.0.0.0:8001 -w ${NUM_WORKERS:-4}
-    volumes:
-      - ./static_volume:/home/app/web/staticfiles
-      - ./media_volume:/home/app/web/mediafiles
-      - ./app/logs:/home/app/web/logs
+    # volumes:
+    #   - ./static_volume:/home/app/web/staticfiles
+    #   - ./media_volume:/home/app/web/mediafiles
+    #   - ./app/logs:/home/app/web/logs
     ports:
       - ${PORT:-8001}:8001
 
-    restart: unless-stopped
+    # restart: unless-stopped
     networks:
       - django_init_project_network
     deploy:
-      replicas: 10
+      replicas: 5
       resources:
         limits:
           cpus: '0.50'
@@ -61,7 +61,7 @@ services:
           memory: 256M
       restart_policy:
         condition: on-failure
-        delay: 5s
+        # delay: 5s
         # max_attempts: 3
         # window: 120s
 
