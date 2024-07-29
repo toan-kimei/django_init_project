@@ -1,22 +1,40 @@
 version: "3.8"
 
 services:
-  django_init_project:
-    image: django_init_project:latest
-    build:
-      context: ./app
-      dockerfile: Dockerfile
-    command: python manage.py runserver
+  postgres:
+      image: postgres:12.2
+      ports:
+          - 5432:5432
+      environment:
+          - POSTGRES_DB=${DB_NAME:-djangodb}
+          - POSTGRES_HOST_AUTH_METHOD=trust
+      volumes:
+          - django-swarm-example_postgres-data:/var/lib/postgresql/data
+  redis:
+    image: redis:6-alpine
     ports:
-      - ${PORT:-8000}:8000
-    deploy:
-      replicas: 10
-      resources:
-        limits:
-          cpus: '0.50'
-          memory: 512M
-        reservations:
-          cpus: '0.25'
-          memory: 256M
-      restart_policy:
-        condition: on-failure
+      - 6379:6379
+  django:
+    build:
+      context: .
+      dockerfile: ./development/Dockerfile
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./app:/usr/src/app/
+    ports:
+      - 8000:8000
+    environment:
+      - DEBUG=${DEBUG:-1}
+      - SECRET_KEY=${SECRET_KEY:-}
+      - DB_NAME=${DB_NAME:-djangodb}
+      - DB_HOST=${DB_HOST:-172.17.0.1}
+      - DB_USER=${DB_USER:-postgres}
+      - DB_PASSWORD=${DB_PASSWORD:-}
+      - DB_PORT=${DB_PORT:-5432}
+      - REDIS_URI=${REDIS_URI:-redis:6379/1}
+    depends_on:
+      - postgres
+      - redis
+
+volumes:
+  django-swarm-example_postgres-data:
